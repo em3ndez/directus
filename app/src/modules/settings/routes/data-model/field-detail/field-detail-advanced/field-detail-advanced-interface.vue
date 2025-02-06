@@ -1,109 +1,127 @@
-<template>
-	<div>
-		<v-fancy-select v-model="interfaceID" class="select" :items="selectItems" />
-
-		<v-notice v-if="interfaceID && !selectedInterface" class="not-found" type="danger">
-			{{ t('interface_not_found', { interface: interfaceID }) }}
-			<div class="spacer" />
-			<button @click="interfaceID = null">{{ t('reset_interface') }}</button>
-		</v-notice>
-
-		<extension-options
-			v-if="interfaceID && selectedInterface"
-			type="interface"
-			:extension="interfaceID"
-			show-advanced
-		/>
-	</div>
-</template>
-
-<script lang="ts">
-import { useI18n } from 'vue-i18n';
-import { defineComponent, computed } from 'vue';
-import { getInterfaces } from '@/interfaces';
-import { FancySelectItem } from '@/components/v-fancy-select/types';
-import { InterfaceConfig } from '@directus/shared/types';
-import { useFieldDetailStore, syncFieldDetailStoreProperty } from '../store/';
+<script setup lang="ts">
+import { FancySelectItem } from '@/components/v-fancy-select.vue';
+import { useExtension } from '@/composables/use-extension';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import ExtensionOptions from '../shared/extension-options.vue';
+import { syncFieldDetailStoreProperty, useFieldDetailStore } from '../store/';
 
-export default defineComponent({
-	components: { ExtensionOptions },
-	setup() {
-		const { t } = useI18n();
+const { t } = useI18n();
 
-		const fieldDetailStore = useFieldDetailStore();
+const fieldDetailStore = useFieldDetailStore();
 
-		const interfaceID = syncFieldDetailStoreProperty('field.meta.interface');
-		const options = syncFieldDetailStoreProperty('field.meta.options');
+const interfaceId = syncFieldDetailStoreProperty('field.meta.interface');
 
-		const { field, interfacesForType } = storeToRefs(fieldDetailStore);
-		const type = computed(() => field.value.type);
+const { loading, field, interfacesForType } = storeToRefs(fieldDetailStore);
+const type = computed(() => field.value.type);
 
-		const { interfaces } = getInterfaces();
+const selectItems = computed(() => {
+	const recommendedInterfacesPerType: { [type: string]: string[] } = {
+		string: ['input', 'select-dropdown'],
+		text: ['input-rich-text-html'],
+		boolean: ['boolean'],
+		integer: ['input'],
+		bigInteger: ['input'],
+		float: ['input'],
+		decimal: ['input'],
+		timestamp: ['datetime'],
+		datetime: ['datetime'],
+		date: ['datetime'],
+		time: ['datetime'],
+		json: ['select-multiple-checkbox', 'tags'],
+		uuid: ['input'],
+		csv: ['tags'],
+	};
 
-		const selectItems = computed(() => {
-			const recommendedInterfacesPerType: { [type: string]: string[] } = {
-				string: ['input', 'select-dropdown'],
-				text: ['input-rich-text-html'],
-				boolean: ['boolean'],
-				integer: ['input'],
-				bigInteger: ['input'],
-				float: ['input'],
-				decimal: ['input'],
-				timestamp: ['datetime'],
-				datetime: ['datetime'],
-				date: ['datetime'],
-				time: ['datetime'],
-				json: ['select-multiple-checkbox', 'tags'],
-				uuid: ['input'],
-				csv: ['tags'],
-			};
+	const recommended = recommendedInterfacesPerType[type.value ?? 'alias'] || [];
 
-			const recommended = recommendedInterfacesPerType[type.value ?? 'alias'] || [];
+	const interfaceItems: FancySelectItem[] = interfacesForType.value.map((inter) => {
+		const item: FancySelectItem = {
+			text: inter.name,
+			description: inter.description,
+			value: inter.id,
+			icon: inter.icon,
+		};
 
-			const interfaceItems: FancySelectItem[] = interfacesForType.value.map((inter) => {
-				const item: FancySelectItem = {
-					text: inter.name,
-					description: inter.description,
-					value: inter.id,
-					icon: inter.icon,
-				};
+		if (recommended.includes(item.value as string)) {
+			item.iconRight = 'star';
+		}
 
-				if (recommended.includes(item.value as string)) {
-					item.iconRight = 'star';
-				}
+		return item;
+	});
 
-				return item;
-			});
+	const recommendedItems: FancySelectItem[] = [];
 
-			const recommendedItems: (FancySelectItem | { divider: boolean } | undefined)[] = [];
+	const recommendedList = recommended.map((key) => interfaceItems.find((item) => item.value === key));
 
-			const recommendedList = recommended.map((key) => interfaceItems.find((item) => item.value === key));
-			if (recommendedList !== undefined) {
-				recommendedItems.push(...recommendedList.filter((i) => i));
-			}
+	if (recommendedList !== undefined) {
+		recommendedItems.push(...recommendedList.filter((item): item is FancySelectItem => !!item));
+	}
 
-			if (interfaceItems.length >= 5 && recommended.length > 0) {
-				recommendedItems.push({ divider: true });
-			}
+	if (interfaceItems.length >= 5 && recommended.length > 0) {
+		recommendedItems.push({ divider: true });
+	}
 
-			const interfaceList = interfaceItems.filter((item) => recommended.includes(item.value as string) === false);
-			if (interfaceList !== undefined) {
-				recommendedItems.push(...interfaceList.filter((i) => i));
-			}
+	const interfaceList = interfaceItems.filter((item) => recommended.includes(item.value as string) === false);
 
-			return recommendedItems;
+	if (interfaceList !== undefined) {
+		recommendedItems.push(...interfaceList.filter((i) => i));
+	}
+
+	return recommendedItems;
+});
+
+const selectedInterface = useExtension('interface', interfaceId);
+
+const customOptionsFields = computed(() => {
+	if (typeof selectedInterface.value?.options === 'function') {
+		return selectedInterface.value?.options(fieldDetailStore);
+	}
+
+	return undefined;
+});
+
+const options = computed({
+	get() {
+		return fieldDetailStore.field.meta?.options ?? {};
+	},
+	set(newOptions: Record<string, any>) {
+		fieldDetailStore.update({
+			field: {
+				meta: {
+					options: newOptions,
+				},
+			},
 		});
-
-		const selectedInterface = computed(() => {
-			return interfaces.value.find((inter: InterfaceConfig) => inter.id === interfaceID.value);
-		});
-
-		return { t, selectItems, selectedInterface, interfaceID, options };
 	},
 });
 </script>
+
+<template>
+	<div>
+		<v-skeleton-loader v-if="loading" />
+		<v-fancy-select v-else v-model="interfaceId" class="select" :items="selectItems" />
+
+		<v-skeleton-loader v-if="loading" />
+		<template v-else>
+			<v-notice v-if="interfaceId && !selectedInterface" class="not-found" type="danger">
+				{{ t('interface_not_found', { interface: interfaceId }) }}
+				<div class="spacer" />
+				<button @click="interfaceId = null">{{ t('reset_interface') }}</button>
+			</v-notice>
+
+			<extension-options
+				v-if="interfaceId && selectedInterface"
+				v-model="options"
+				type="interface"
+				:options="customOptionsFields"
+				:extension="interfaceId"
+				show-advanced
+			/>
+		</template>
+	</div>
+</template>
 
 <style lang="scss" scoped>
 .type-title,
@@ -121,7 +139,8 @@ export default defineComponent({
 	}
 }
 
-.v-notice {
+.v-notice,
+.v-skeleton-loader {
 	margin-bottom: 36px;
 }
 </style>
