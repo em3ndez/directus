@@ -1,4 +1,5 @@
-import { defineInterface } from '@directus/shared/utils';
+import { DeepPartial, Field } from '@directus/types';
+import { defineInterface } from '@directus/extensions';
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/meta';
 import InterfaceCode from './input-code.vue';
@@ -37,43 +38,66 @@ export default defineInterface({
 	types: ['string', 'json', 'text', 'geometry'],
 	group: 'standard',
 	preview: PreviewSVG,
-	options: [
-		{
-			field: 'language',
-			name: '$t:language',
-			type: 'string',
-			meta: {
-				width: 'half',
-				interface: 'select-dropdown',
-				options: { choices },
-			},
-		},
-		{
-			field: 'lineNumber',
-			name: '$t:interfaces.input-code.line_number',
-			type: 'boolean',
-			meta: {
-				width: 'half',
-				interface: 'boolean',
-			},
-			schema: {
-				default_value: false,
-			},
-		},
-		{
-			field: 'template',
-			name: '$t:template',
-			type: 'text',
-			meta: {
-				width: 'full',
-				interface: 'input-code',
-				options: {
-					placeholder: '$t:interfaces.input-code.placeholder',
+	options: ({ field }) => {
+		const sharedOptions: DeepPartial<Field>[] = [
+			{
+				field: 'lineNumber',
+				name: '$t:interfaces.input-code.line_number',
+				type: 'boolean',
+				meta: {
+					width: 'half',
+					interface: 'boolean',
+				},
+				schema: {
+					default_value: true,
 				},
 			},
-			schema: {
-				default_value: null,
+			{
+				field: 'lineWrapping',
+				name: '$t:interfaces.input-code.line_wrapping',
+				type: 'boolean',
+				meta: {
+					width: 'half',
+					interface: 'boolean',
+				},
+				schema: {
+					default_value: false,
+				},
 			},
-		},
-	],
+			{
+				field: 'template',
+				name: '$t:template',
+				type: 'text',
+				meta: {
+					width: 'full',
+					interface: 'input-code',
+					options: {
+						placeholder: '$t:interfaces.input-code.placeholder',
+					},
+				},
+			},
+		];
+
+		const defaultOptions: DeepPartial<Field>[] = [
+			{
+				field: 'language',
+				name: '$t:language',
+				type: 'string',
+				meta: {
+					width: 'full',
+					interface: 'select-dropdown',
+					options: { choices },
+				},
+			},
+			...sharedOptions,
+		];
+
+		const jsonOptions: DeepPartial<Field>[] = [...sharedOptions];
+
+		if (field?.type === 'json') {
+			return jsonOptions;
+		}
+
+		return defaultOptions;
+	},
 });

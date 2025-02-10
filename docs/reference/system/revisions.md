@@ -1,36 +1,21 @@
 ---
+description: REST and GraphQL API documentation on the Revisions collection in Directus.
+readTime: 2 min read
 pageClass: page-reference
 ---
 
 # Revisions
 
-<div class="two-up">
-<div class="left">
-
 > Revisions are individual changes to items made. Directus keeps track of changes made, so you're able to revert to a
-> previous state at will. [Learn more about Revisions](/getting-started/glossary/#revisions).
-
-</div>
-<div class="right">
-
-[[toc]]
-
-</div>
-</div>
-
----
+> previous state at will. [Learn more about Revisions](/user-guide/overview/glossary#revisions).
 
 ## The Revision Object
-
-<div class="two-up">
-<div class="left">
-<div class="definitions">
 
 `id` **integer**\
 Primary key of the revision.
 
 `activity` **many-to-one**\
-Related activity record. Many-to-one to [activity](/reference/system/activity/).
+Related activity record. Many-to-one to [activity](/reference/system/activity).
 
 `collection` **string**\
 Collection in which this revision happened.
@@ -47,9 +32,8 @@ Snapshot of the changes made in this revision.
 `parent` **many-to-one**\
 Parent revision that triggered this revision. Many-to-one to revisions (recursive).
 
-</div>
-</div>
-<div class="right">
+`version` **many-to-one**\
+Associated version of this revision. Many-to-one to [versions](/reference/system/versions).
 
 ```json
 {
@@ -63,21 +47,14 @@ Parent revision that triggered this revision. Many-to-one to revisions (recursiv
 	"delta": {
 		"title": "Hello from the Docs!"
 	},
-	"parent": null
+	"parent": null,
+	"version": null
 }
 ```
-
-</div>
-</div>
-
----
 
 ## List revisions
 
 List all revisions that exist in Directus.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Permissions
 
@@ -86,32 +63,23 @@ to a collection that the current user doesn't have access to are stripped out.
 
 :::
 
-### Query Parameters
+### Request
 
-Supports all [global query parameters](/reference/query).
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-### Returns
+`GET /revisions`
 
-An array of up to [limit](/reference/query/#limit) [revision objects](#the-revision-object). If no items are available,
-data will be an empty array.
+`SEARCH /revisions`
 
-</div>
-<div class="right">
+If using SEARCH you can provide a [query object](/reference/query) as the body of your request.
 
-### REST API
+[Learn more about SEARCH ->](/reference/introduction#search-http-method)
 
-```
-GET /revisions
-SEARCH /revisions
-```
+</template>
+<template #graphql>
 
-[Learn more about SEARCH ->](/reference/introduction/#search-http-method)
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -119,7 +87,42 @@ type Query {
 }
 ```
 
-##### Examples
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readRevisions } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readRevisions(query_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+### Response
+
+An array of up to [limit](/reference/query#limit) [revision objects](#the-revision-object). If no items are available,
+data will be an empty array.
+
+### Examples
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /revisions`
+
+`SEARCH /revisions`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -131,46 +134,39 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readRevisions } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	readRevisions({
+		fields: ['*'],
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Retrieve a revision
 
 List an existing revision by primary key.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/query).
+`GET /revisions/:id`
 
-### Returns
+</template>
+<template #graphql>
 
-Returns the requested [revision object](#the-revision-object).
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-GET /revisions/:id
-```
-
-##### Example
-
-```
-GET /revisions/322
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -178,7 +174,39 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readRevision } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readRevision(revision_id, query_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+### Response
+
+Returns the requested [revision object](#the-revision-object).
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /revisions/322`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -190,5 +218,20 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readRevision } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	readRevision('53201', {
+		fields: ['*'],
+	})
+);
+```
+
+</template>
+</SnippetToggler>
