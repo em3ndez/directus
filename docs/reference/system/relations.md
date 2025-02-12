@@ -1,30 +1,15 @@
 ---
+description: REST and GraphQL API documentation on the Relations collection in Directus.
+readTime: 5 min read
 pageClass: page-reference
 ---
 
 # Relations
 
-<div class="two-up">
-<div class="left">
-
 > What data is linked to what other data. Allows you to assign authors to articles, products to sales, and whatever
-> other structures you can think of. [Learn more about Relationships](/concepts/relationships/).
-
-</div>
-<div class="right">
-
-[[toc]]
-
-</div>
-</div>
-
----
+> other structures you can think of. [Learn more about Relationships](/user-guide/overview/glossary#relationships).
 
 ## The Relation Object
-
-<div class="two-up">
-<div class="left">
-<div class="definitions">
 
 `collection` **string**\
 Name of the collection. This matches the table name in the database.
@@ -35,13 +20,9 @@ Name of the field that holds the related primary key. This matches the column na
 `related_collection` **string**\
 Name of the related collection. This matches the table name in the database.
 
-</div>
-
 #### Meta
 
 Directus metadata. Used to enable non-database relationship types
-
-<div class="definitions">
 
 `id` **integer**\
 Primary key of the metadata row in `directus_relations`.
@@ -71,16 +52,12 @@ Whether to nullify or delete related one-to-many records.
 What field is used to hold the sort field.
 
 `junction_field` **string**\
-What field connects two relations in a many-to-many (o2m-m2o) context.
-
-</div>
+What field connects two relations in a many-to-many (O2M-M2O) context.
 
 #### Schema
 
 "Raw" database information. Based on the database vendor used, different information might be returned. The following
 are available for all drivers.
-
-<div class="definitions">
 
 `table` **string**\
 The table name.
@@ -102,10 +79,6 @@ Update trigger for the foreign key constraint.
 
 `on_delete` **string**\
 Delete trigger for the foreign key constraint.
-
-</div>
-</div>
-<div class="right">
 
 ```json
 {
@@ -136,17 +109,9 @@ Delete trigger for the foreign key constraint.
 }
 ```
 
-</div>
-</div>
-
----
-
 ## List relations
 
 List all relations that exist in Directus.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Permissions
 
@@ -155,28 +120,17 @@ to a collection that the current user doesn't have access to are stripped out.
 
 :::
 
-### Query Parameters
+### Request
 
-Doesn't support any query parameters.
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-### Returns
+`GET /relations`
 
-Array of [relation objects](#the-relation-object). If no items are available, data will be an empty array.
+</template>
+<template #graphql>
 
-</div>
-<div class="right">
-
-### REST API
-
-```
-GET /relations
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -184,7 +138,39 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readRelations } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readRelations());
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Doesn't support any query parameters.
+
+### Response
+
+Array of [relation objects](#the-relation-object). If no items are available, data will be an empty array.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /relations`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -195,17 +181,23 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readRelations } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(readRelations());
+```
+
+</template>
+</SnippetToggler>
 
 ## List relations in collection
 
 List all relations that exist in a given collection.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Permissions
 
@@ -214,34 +206,17 @@ to a collection that the current user doesn't have access to are stripped out.
 
 :::
 
-### Query Parameters
+### Request
 
-Doesn't support any query parameters.
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-### Returns
+`GET /relations/:collection`
 
-Array of [relation objects](#the-relation-object). If no items are available, data will be an empty array.
+</template>
+<template #graphql>
 
-</div>
-<div class="right">
-
-### REST API
-
-```
-GET /relations/:collection
-```
-
-##### Example
-
-```
-GET /relations/articles
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -249,7 +224,39 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readRelationByCollection } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readRelationByCollection(collection_name));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Doesn't support any query parameters.
+
+### Response
+
+Array of [relation objects](#the-relation-object). If no items are available, data will be an empty array.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /relations/articles`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -260,46 +267,35 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readRelationByCollection } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(readRelationByCollection('articles'));
+```
+
+</template>
+</SnippetToggler>
 
 ## Retrieve a relation
 
 List an existing relation by collection/field name.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Doesn't support any query parameters.
+`GET /relations/:collection/:field`
 
-### Returns
+</template>
+<template #graphql>
 
-Returns the requested [relation object](#the-relation-object).
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-GET /relations/:collection/:field
-```
-
-##### Example
-
-```
-GET /relations/articles/featured_image
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -307,7 +303,39 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readRelation } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readRelation(collection_name, field_name));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Doesn't support any query parameters.
+
+### Response
+
+Returns the requested [relation object](#the-relation-object).
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /relations/articles/featured_image`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -319,56 +347,37 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readRelation } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(readRelation('articles', 'authors'));
+```
+
+</template>
+</SnippetToggler>
 
 ## Create a Relation
 
 Create a new relation.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Doesn't support any query parameters.
+`POST /relations`
 
-### Request Body
+Provide a [relation object](#the-relation-object) as the body of your request.
 
-A partial [relation object](#the-relation-object).
+</template>
+<template #graphql>
 
-### Returns
-
-Returns the [relation object](#the-relation-object) for the created relation.
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-POST /relations
-```
-
-##### Example
-
-```json
-// POST /relations
-
-{
-	"collection": "articles",
-	"field": "featured_image",
-	"related_collection": "directus_files"
-}
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -376,7 +385,51 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, createRelation } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(createRelation(relation_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Doesn't support any query parameters.
+
+#### Request Body
+
+A partial [relation object](#the-relation-object).
+
+### Response
+
+Returns the [relation object](#the-relation-object) for the created relation.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`POST /relations`
+
+```json
+{
+	"collection": "articles",
+	"field": "featured_image",
+	"related_collection": "directus_files"
+}
+```
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -390,56 +443,43 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, createRelation } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	createRelation({
+		collection: 'articles',
+		field: 'header_image',
+		related_collection: 'header_images',
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Update a Relation
 
 Update an existing relation.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Doesn't support any query parameters.
+`PATCH /relations/:collection/:field`
 
-### Request Body
+Provide a partial [relation object](#the-relation-object) as the body of your request.
 
-A partial [relation object](#the-relation-object).
+</template>
+<template #graphql>
 
-### Returns
-
-Returns the [relation object](#the-relation-object) for the created relation.
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-PATCH /relations/:collection/:field
-```
-
-##### Example
-
-```json
-// PATCH /relations/articles/author
-
-{
-	"meta": {
-		"one_field": "articles"
-	}
-}
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -447,7 +487,51 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, updateRelation } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(updateRelation(collection_name, field_name, partial_relation_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Doesn't support any query parameters.
+
+#### Request Body
+
+A partial [relation object](#the-relation-object).
+
+### Response
+
+Returns the [relation object](#the-relation-object) for the created relation.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`PATCH /relations/articles/author`
+
+```json
+{
+	"meta": {
+		"one_field": "articles"
+	}
+}
+```
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -459,42 +543,41 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, updateRelation } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	updateRelation('articles', 'authors', {
+		meta: {
+			sort_field: 'articles',
+		},
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Delete a Relation
 
 Delete an existing relation.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Returns
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Empty body.
+`DELETE /relations/:collection/:field`
 
-</div>
-<div class="right">
+</template>
+<template #graphql>
 
-### REST API
-
-```
-DELETE /relations/:collection/:field
-```
-
-##### Example
-
-```
-DELETE /relations/articles/author
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -502,7 +585,35 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, deleteRelation } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(deleteRelation(collection_name, field_name));
+```
+
+</template>
+</SnippetToggler>
+
+### Returns
+
+Empty body.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`DELETE /relations/articles/author`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -513,5 +624,16 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, deleteRelation } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(deleteRelation('articles', 'authors'));
+```
+
+</template>
+</SnippetToggler>

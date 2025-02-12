@@ -1,5 +1,6 @@
-import { defineInterface } from '@directus/shared/utils';
+import { defineInterface } from '@directus/extensions';
 import InterfaceGroupDivider from './group-accordion.vue';
+import PreviewSVG from './preview.svg?raw';
 
 export default defineInterface({
 	id: 'group-accordion',
@@ -9,6 +10,7 @@ export default defineInterface({
 	component: InterfaceGroupDivider,
 	hideLabel: true,
 	hideLoader: true,
+	autoKey: true,
 	types: ['alias'],
 	localTypes: ['group'],
 	group: 'group',
@@ -78,4 +80,5 @@ export default defineInterface({
 			},
 		},
 	],
+	preview: PreviewSVG,
 });

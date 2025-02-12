@@ -1,6 +1,8 @@
-import { defineInterface } from '@directus/shared/utils';
+import { defineInterface } from '@directus/extensions';
+import type { ComponentOptions } from 'vue';
 import InterfaceMap from './map.vue';
 import Options from './options.vue';
+import PreviewSVG from './preview.svg?raw';
 
 export default defineInterface({
 	id: 'map',
@@ -8,8 +10,21 @@ export default defineInterface({
 	description: '$t:interfaces.map.description',
 	icon: 'map',
 	component: InterfaceMap,
-	types: ['geometry', 'json', 'string', 'text', 'binary', 'csv'],
+	types: [
+		'geometry.Point',
+		'geometry.LineString',
+		'geometry.Polygon',
+		'geometry.MultiPoint',
+		'geometry.MultiLineString',
+		'geometry.MultiPolygon',
+		'geometry',
+		'json',
+		'string',
+		'text',
+		'csv',
+	],
 	group: 'selection',
-	options: Options,
+	options: Options as ComponentOptions,
 	recommendedDisplays: [],
+	preview: PreviewSVG,
 });

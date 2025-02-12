@@ -1,30 +1,15 @@
 ---
+description: REST and GraphQL API documentation on the Folders collection in Directus.
+readTime: 4 min read
 pageClass: page-reference
 ---
 
 # Folders
 
-<div class="two-up">
-<div class="left">
-
 > Folders can be used to organize files within the platform. Folders are virtual, and aren't mirrored within the storage
 > adapter.
 
-</div>
-<div class="right">
-
-[[toc]]
-
-</div>
-</div>
-
----
-
 ## The Folder Object
-
-<div class="two-up">
-<div class="left">
-<div class="definitions">
 
 `id` **uuid**\
 Primary key of the folder.
@@ -34,10 +19,6 @@ Name of the folder.
 
 `parent` **many-to-one**\
 Parent folder. Many-to-one to folders (recursive).
-
-</div>
-</div>
-<div class="right">
 
 ```json
 {
@@ -49,44 +30,27 @@ Parent folder. Many-to-one to folders (recursive).
 }
 ```
 
-</div>
-</div>
-
----
-
 ## List Folders
 
 List all folders that exist in Directus.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/api/query).
+`GET /folders`
 
-### Returns
+`SEARCH /folders`
 
-An array of up to [limit](/reference/api/query/#limit) [folder objects](#the-folder-object). If no items are available,
-data will be an empty array.
+If using SEARCH you can provide a [query object](/reference/query) as the body of your request.
 
-</div>
-<div class="right">
+[Learn more about SEARCH ->](/reference/introduction#search-http-method)
 
-### REST API
+</template>
+<template #graphql>
 
-```
-GET /folders
-SEARCH /folders
-```
-
-[Learn more about SEARCH ->](/reference/api/introduction/#search-http-method)
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -94,7 +58,42 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readFolders } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readFolders(query_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+### Response
+
+An array of up to [limit](/reference/query#limit) [folder objects](#the-folder-object). If no items are available, data
+will be an empty array.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /folders`
+
+`SEARCH /folders`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -104,46 +103,39 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readFolders } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	readFolders({
+		fields: ['*'],
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Retrieve a Folder
 
-List all folders that exist in Directus.
+List an existing folder by primary key.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/api/query).
+`GET /folders/:id`
 
-### Returns
+</template>
+<template #graphql>
 
-Returns a [folder object](#the-folder-object) if a valid primary key was provided.
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-GET /folders/:id
-```
-
-##### Example
-
-```
-GET /folders/fc02d733-95b8-4e27-bd4b-08a32cbe4e66
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -151,7 +143,39 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readFolder } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readFolder(folder_id, query_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+### Response
+
+Returns a [folder object](#the-folder-object) if a valid primary key was provided.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /folders/fc02d733-95b8-4e27-bd4b-08a32cbe4e66`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -161,54 +185,41 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readFolder } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	readFolder('a141336b-398a-44d0-ad1b-4e31b09219a1', {
+		fields: ['*'],
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Create a Folder
 
 Create a new (virtual) folder.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/api/query).
+`POST /folders`
 
-### Request Body
+Provide a [folder object](#the-folder-object) as the body of your request.
 
-A partial [folder object](#the-folder-object). `name` is required.
+</template>
+<template #graphql>
 
-### Returns
-
-Returns the [folder object](#the-folder-object) of the folder that was created.
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-POST /folders
-```
-
-##### Example
-
-```json
-// POST /folders
-
-{
-	"name": "Nature"
-}
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -216,7 +227,49 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, createFolder } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(createFolder(folder_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+#### Request Body
+
+A partial [folder object](#the-folder-object). `name` is required.
+
+### Response
+
+Returns the [folder object](#the-folder-object) of the folder that was created.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`POST /folders`
+
+```json
+{
+	"name": "Nature"
+}
+```
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -227,44 +280,82 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, createFolder } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	createFolder({
+		name: 'banner images',
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Create Multiple Folders
 
 Create multiple new (virtual) folders.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/api/query).
+`POST /folders`
 
-### Request Body
+Provide an array of [folder object](#the-folder-object) as the body of your request.
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
+
+```graphql
+type Mutation {
+	create_folders_items(data: [create_directus_folders_input]): [directus_folders]
+}
+```
+
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, createFolders } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(createFolders(folder_object_array));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+#### Request Body
 
 An array of partial [folder objects](#the-folder-object). `name` is required.
 
-### Returns
+### Response
 
 Returns the [folder object](#the-folder-object) of the folder that was created.
 
-</div>
-<div class="right">
+### Example
 
-### REST API
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-```
-POST /folders
-```
-
-##### Example
+`POST /folders`
 
 ```json
-// POST /folders
-
 [
 	{
 		"name": "Nature"
@@ -275,19 +366,10 @@ POST /folders
 ]
 ```
 
-### GraphQL
+</template>
+<template #graphql>
 
-```
-POST /graphql/system
-```
-
-```graphql
-type Mutation {
-	create_folders_items(data: [create_directus_folders_input]): [directus_folders]
-}
-```
-
-##### Example
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -298,54 +380,46 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, createFolders } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	createFolders([
+		{
+			name: 'hero images',
+		},
+		{
+			name: 'transcript pdfs',
+		},
+	])
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Update a Folder
 
 Update an existing folder.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/api/query).
+`PATCH /folders/:id`
 
-### Request Body
+Provide a partial [folder object](#the-folder-object) as the body of your request.
 
-A partial [folder object](#the-folder-object).
+</template>
+<template #graphql>
 
-### Returns
-
-Returns the [folder object](#the-folder-object) of the folder that was updated.
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-PATCH /folders/:id
-```
-
-##### Example
-
-```json
-// PATCH /folders/fac21847-d5ce-4e4b-a288-9abafbdfbc87
-
-{
-	"parent": "d97c2e0e-293d-4eb5-9e1c-27d3460ad29d"
-}
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -353,7 +427,49 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, updateFolder } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(updateFolder(folder_id, partial_folder_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+#### Request Body
+
+A partial [folder object](#the-folder-object).
+
+### Response
+
+Returns the [folder object](#the-folder-object) of the folder that was updated.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`PATCH /folders/fac21847-d5ce-4e4b-a288-9abafbdfbc87`
+
+```json
+{
+	"parent": "d97c2e0e-293d-4eb5-9e1c-27d3460ad29d"
+}
+```
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -367,25 +483,72 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, updateFolder } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	updateFolder('a3c77ec8-35f0-467b-9dc5-5195c4cfdae0', {
+		parent: 'a151aa85-4784-44cb-8ee8-c568e45e00fd',
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Update Multiple Folders
 
 Update multiple existing folders.
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Query Parameters
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Supports all [global query parameters](/reference/api/query).
+`PATCH /folders`
 
-### Request Body
+```json
+{
+	"keys": folder_id_array,
+	"data": partial_folder_object
+}
+```
 
-<div class="definitions">
+</template>
+<template #graphql>
+
+`POST /graphql/system`
+
+```graphql
+type Mutation {
+	update_folders_items(ids: [ID!]!, data: update_directus_folders_input): [directus_folders]
+}
+```
+
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, updateFolders } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(updateFolders(folder_id_array, partial_folder_object));
+```
+
+</template>
+</SnippetToggler>
+
+#### Query Parameters
+
+Supports all [global query parameters](/reference/query).
+
+#### Request Body
 
 `keys` **Required**\
 Array of primary keys of the folders you'd like to update.
@@ -393,26 +556,18 @@ Array of primary keys of the folders you'd like to update.
 `data` **Required**\
 Any of [the folder object](#the-folder-object)'s properties.
 
-</div>
-
-### Returns
+### Response
 
 Returns the [folder objects](#the-folder-object) of the folders that were updated.
 
-</div>
-<div class="right">
+### Example
 
-### REST API
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-```
-PATCH /folders
-```
-
-##### Example
+`PATCH /folders`
 
 ```json
-// PATCH /folders
-
 {
 	"keys": ["fac21847-d5ce-4e4b-a288-9abafbdfbc87", "a5bdb793-dd85-4ac9-882a-b42862092983"],
 	"data": {
@@ -421,19 +576,10 @@ PATCH /folders
 }
 ```
 
-### GraphQL
+</template>
+<template #graphql>
 
-```
-POST /graphql/system
-```
-
-```graphql
-type Mutation {
-	update_folders_items(ids: [ID!]!, data: update_directus_folders_input): [directus_folders]
-}
-```
-
-##### Example
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -447,17 +593,27 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, updateFolders } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	updateFolders(['a3c77ec8-35f0-467b-9dc5-5195c4cfdae0', '1d8428f9-c437-4d4e-b3df-d276c605f454'], {
+		parent: 'a151aa85-4784-44cb-8ee8-c568e45e00fd',
+	})
+);
+```
+
+</template>
+</SnippetToggler>
 
 ## Delete a Folder
 
 Delete an existing folder.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Files
 
@@ -465,30 +621,17 @@ Any files in this folder will be moved to the root folder.
 
 :::
 
-### Returns
+### Request
 
-Empty body.
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-</div>
-<div class="right">
+`DELETE /folders/:id`
 
-### REST API
+</template>
+<template #graphql>
 
-```
-DELETE /folders/:id
-```
-
-##### Example
-
-```
-// DELETE /folders/a5bdb793-dd85-4ac9-882a-b42862092983
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -496,7 +639,35 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, deleteFolder } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(deleteFolder(folder_id));
+```
+
+</template>
+</SnippetToggler>
+
+### Response
+
+Empty body.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`DELETE /folders/a5bdb793-dd85-4ac9-882a-b42862092983`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 mutation {
@@ -506,17 +677,23 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, deleteFolder } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(deleteFolder('a3c77ec8-35f0-467b-9dc5-5195c4cfdae0'));
+```
+
+</template>
+</SnippetToggler>
 
 ## Delete Multiple Folders
 
 Delete multiple existing folders.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Files
 
@@ -524,36 +701,19 @@ Any files in these folders will be moved to the root folder.
 
 :::
 
-### Request Body
+### Request
 
-An array of folder primary keys.
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-### Returns
+`DELETE /folders`
 
-Empty body.
+Provide an array of item IDs as your request body.
 
-</div>
-<div class="right">
+</template>
+<template #graphql>
 
-### REST API
-
-```
-DELETE /folders
-```
-
-##### Example
-
-```json
-// DELETE /folders
-
-["d97c2e0e-293d-4eb5-9e1c-27d3460ad29d", "fc02d733-95b8-4e27-bd4b-08a32cbe4e66"]
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Mutation {
@@ -561,7 +721,41 @@ type Mutation {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, deleteFolders } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(deleteFolders(folder_id_array));
+```
+
+</template>
+</SnippetToggler>
+
+#### Request Body
+
+An array of folder primary keys.
+
+### Returns
+
+Empty body.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`DELETE /folders`
+
+```json
+["d97c2e0e-293d-4eb5-9e1c-27d3460ad29d", "fc02d733-95b8-4e27-bd4b-08a32cbe4e66"]
+```
+
+</template>
+<template #graphql>
 
 ```graphql
 mutation {
@@ -571,5 +765,18 @@ mutation {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, deleteFolders } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(
+	deleteFolders(['1d8428f9-c437-4d4e-b3df-d276c605f454', 'a151aa85-4784-44cb-8ee8-c568e45e00f'])
+);
+```
+
+</template>
+</SnippetToggler>

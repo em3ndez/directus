@@ -1,31 +1,17 @@
 ---
+description: REST and GraphQL API documentation on the Server collection in Directus.
+readTime: 4 min read
 pageClass: page-reference
 ---
 
 # Server
 
-<div class="two-up">
-<div class="left">
-
 > Provides detailed information about the project server, its schema, and its health.
-> [Learn more about Projects](/concepts/projects/).
-
-</div>
-<div class="right">
-
-[[toc]]
-
-</div>
-</div>
-
----
+> [Learn more about Projects](/user-guide/overview/glossary#projects).
 
 ## Get OpenAPI Specification
 
 Retrieve the OpenAPI spec for the current project.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Permissions
 
@@ -33,24 +19,17 @@ This OAS spec is based on the read permissions of the currently authenticated us
 
 :::
 
-### Returns
+### Request
 
-Object conforming to [the OpenAPI Specification](https://swagger.io/specification/)
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-</div>
-<div class="right">
+`GET /server/specs/oas`
 
-### REST API
+</template>
+<template #graphql>
 
-```
-GET /server/specs/oas
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -58,7 +37,33 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readOpenApiSpec } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readOpenApiSpec());
+```
+
+</template>
+</SnippetToggler>
+
+### Response
+
+Object conforming to [the OpenAPI Specification](https://swagger.io/specification)
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /server/specs/oas`
+
+</template>
+<template #graphql>
 
 ```graphql
 query {
@@ -66,17 +71,23 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readOpenApiSpec } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(readOpenApiSpec());
+```
+
+</template>
+</SnippetToggler>
 
 ## Get GraphQL SDL
 
 Retrieve the GraphQL SDL for the current project.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Permissions
 
@@ -84,45 +95,19 @@ The SDL is based on the permissions of the currently authenticated user.
 
 :::
 
-### Returns
+### Request
 
-GraphQL SDL file.
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-```graphql
-type about_us {
-  id: Int
-  introduction: String
-  our_process: String
-  sales_email: String
-  general_email: String
-  primary_color: String
-  secondary_color: String
-  logo: directus_files
-  mark: directus_files
-}
+`GET /server/specs/graphql/`
 
-type articles {
-  id: Int
-  status: String
-	...
-# etc
-```
+`GET /server/specs/graphql/system`
 
-</div>
-<div class="right">
+</template>
+<template #graphql>
 
-### REST API
-
-```
-GET /server/specs/graphql/
-GET /server/specs/graphql/system
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -130,44 +115,95 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, readGraphqlSdl } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(readGraphqlSdl(scope));
+```
+
+</template>
+</SnippetToggler>
+
+### Returns
+
+GraphQL SDL file.
+
+```graphql
+type about_us {
+	id: Int
+	introduction: String
+	our_process: String
+	sales_email: String
+	general_email: String
+	primary_color: String
+	secondary_color: String
+	logo: directus_files
+	mark: directus_files
+}
+
+type articles {
+	id: Int
+	status: String
+	# ...
+}
+
+# etc
+```
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /server/specs/graphql/`
+
+`GET /server/specs/graphql/system`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
-	server_specs_graphql(scope: "system")
+	server_specs_graphql(scope: system)
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, readGraphqlSdl } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(readGraphqlSdl('item'));
+```
+
+</template>
+</SnippetToggler>
 
 ## Ping
 
 Ping... pong! 🏓
 
-<div class="two-up">
-<div class="left">
+### Request
 
-### Returns
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-Pong.
+`GET /server/ping`
 
-</div>
-<div class="right">
+</template>
+<template #graphql>
 
-### REST API
-
-```
-GET /server/ping
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -175,7 +211,35 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, serverPing } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(serverPing());
+```
+
+</template>
+</SnippetToggler>
+
+### Returns
+
+Pong.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /server/ping`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -183,17 +247,23 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, serverPing } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(serverPing());
+```
+
+</template>
+</SnippetToggler>
 
 ## Info
 
 Information about the current installation.
-
-<div class="two-up">
-<div class="left">
 
 ::: tip Permissions
 
@@ -201,59 +271,17 @@ The public information is returned for everybody. Admin users get additional inf
 
 :::
 
-### Returns
+### Request
 
-<div class="definitions">
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
 
-`project` **object**\
-Public information about the project. Used to render the Admin App public pages.
+`GET /server/info`
 
-See [the settings object](/reference/api/settings/#the-settings-object) for more information on the individual
-properties of the `project` object.
+</template>
+<template #graphql>
 
-</div>
-
-Admin users also get the following information:
-
-<div class="definitions">
-
-`directus.version` **string**\
-Current version of Directus used.
-
-`node.version` **string**\
-Current version of Node used.
-
-`node.uptime` **integer**\
-How long the current process has been running.
-
-`os.type` **string**\
-What type of operation system is used.
-
-`os.version` **string**\
-What version of the operation system is used.
-
-`os.uptime` **string**\
-How long the operating system has been up.
-
-`os.totalmem` **string**\
-How much memory is available on the operating system.
-
-</div>
-
-</div>
-<div class="right">
-
-### REST API
-
-```
-GET /server/info
-```
-
-### GraphQL
-
-```
-POST /graphql/system
-```
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -261,134 +289,164 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, serverInfo } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(serverInfo());
+```
+
+</template>
+</SnippetToggler>
+
+### Response
+
+`project` **object**\
+Public information about the project. Used to render the Data Studio public pages.
+
+See [the settings object](/reference/system/settings#the-settings-object) for more information on the individual
+properties of the `project` object.
+
+Logged in users also get the following information:
+
+`rateLimit` **false | object**\
+Whether or not the rate limiter is enabled.
+
+`rateLimit.points` **number**\
+If rate-limiter is enabled, amount of allowed points per duration
+
+`rateLimit.duration` **number**\
+If rate-limiter is enabled, duration in seconds in which points are counted
+
+`queryLimit.default` **number**\
+The default query limit used when not defined in the API request
+
+`queryLimit.max` **number**\
+The maximum query limit accepted on API requests
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /server/info`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
 	server_info {
-		directus {
-			version
+		project {
+			project_name
 		}
 	}
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, serverInfo } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(serverInfo());
+```
+
+</template>
+</SnippetToggler>
 
 ## Health
 
 Get the current health status of the server.
 
-<div class="two-up">
-<div class="left">
-
 The `/server/health` endpoint shows you a general health status for the server and all connected (third party) services,
 such as Redis or S3.
 
 The output is based on the "Health Check Response for HTTP APIs" draft spec:
-[Health Check Response Format for HTTP APIs Draft Specification](https://tools.ietf.org/id/draft-inadarei-api-health-check-05.html).
+[Health Check Response Format for HTTP APIs Draft Specification](https://datatracker.ietf.org/doc/html/draft-inadarei-api-health-check-06).
 
-This endpoint can be used to ensure a healthy system when running in a horizontally scaled setup, like Kubernetes or AWS
-Elastic Beanstalk.
+This endpoint can be used to ensure a healthy system when running in a horizontally scaled setup, like Kubernetes,
+Google Cloud Platform or AWS Elastic Beanstalk.
 
 By default, the endpoint only returns a `status` of `ok`, `warn` or `error`. By authenticating as an admin, it will
 return more in-depth information about the current health status of the system.
 
-```json
-// Response
+::: code-group
 
-// Non-admin
+```json [Non-Admin Response]
 {
-  "status": "ok"
-}
-
-// Admin
-{
-  "status": "ok",
-  "releaseId": "9.0.0",
-  "serviceId": "3292c816-ae02-43b4-ba91-f0bb549f040c",
-  "checks": {
-    "pg:responseTime": [
-      {
-        "status": "ok",
-        "componentType": "datastore",
-        "observedUnit": "ms",
-        "observedValue": 0.489
-      }
-    ],
-    "pg:connectionsAvailable": [
-      {
-        "status": "ok",
-        "componentType": "datastore",
-        "observedValue": 2
-      }
-    ],
-    "pg:connectionsUsed": [
-      {
-        "status": "ok",
-        "componentType": "datastore",
-        "observedValue": 0
-      }
-    ],
-    "storage:local:responseTime": [
-      {
-        "status": "ok",
-        "componentType": "objectstore",
-        "observedValue": 1.038,
-        "observedUnit": "ms"
-      }
-    ],
-    "email:connection": [
-      {
-        "status": "ok",
-        "componentType": "email"
-      }
-    ]
-  }
+	"status": "ok"
 }
 ```
 
-### Returns
-
-<div class="definitions">
-
-`status` **string**\
-One of `ok`, `warn`, `error`.
-
-</div>
-
-Authenticated admin users also get the following information:
-
-<div class="definitions">
-
-`releaseId` **string**\
-Directus version in use.
-
-`serviceId` **string**\
-UUID of the current Directus instance.
-
-`checks` **array**\
-Array with the status of all individually connected services.
-
-</div>
-
-</div>
-<div class="right">
-
-### REST API
-
+```json [Admin Response]
+{
+	"status": "ok",
+	"releaseId": "10.0.0",
+	"serviceId": "https://directus.example.com",
+	"checks": {
+		"pg:responseTime": [
+			{
+				"status": "ok",
+				"componentType": "datastore",
+				"observedUnit": "ms",
+				"observedValue": 0.489
+			}
+		],
+		"pg:connectionsAvailable": [
+			{
+				"status": "ok",
+				"componentType": "datastore",
+				"observedValue": 2
+			}
+		],
+		"pg:connectionsUsed": [
+			{
+				"status": "ok",
+				"componentType": "datastore",
+				"observedValue": 0
+			}
+		],
+		"storage:local:responseTime": [
+			{
+				"status": "ok",
+				"componentType": "objectstore",
+				"observedValue": 1.038,
+				"observedUnit": "ms"
+			}
+		],
+		"email:connection": [
+			{
+				"status": "ok",
+				"componentType": "email"
+			}
+		]
+	}
+}
 ```
-GET /server/health
-```
 
-### GraphQL
+:::
 
-```
-POST /graphql/system
-```
+### Request
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /server/health`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 type Query {
@@ -396,7 +454,47 @@ type Query {
 }
 ```
 
-##### Example
+</template>
+<template #sdk>
+
+```js
+import { createDirectus, rest, serverHealth } from '@directus/sdk';
+
+const client = createDirectus('directus_project_url').with(rest());
+
+const result = await client.request(serverHealth());
+```
+
+</template>
+</SnippetToggler>
+
+### Returns
+
+`status` **string**\
+One of `ok`, `warn`, `error`.
+
+Authenticated admin users also get the following information:
+
+`releaseId` **string**\
+Directus version in use.
+
+`serviceId` **string**\
+Public URL of the current Directus instance.
+
+`checks` **array**\
+Array with the status of all individually connected services.
+
+### Example
+
+<SnippetToggler :choices="['REST', 'GraphQL', 'SDK']" group="api">
+<template #rest>
+
+`GET /server/health`
+
+</template>
+<template #graphql>
+
+`POST /graphql/system`
 
 ```graphql
 query {
@@ -404,7 +502,16 @@ query {
 }
 ```
 
-</div>
-</div>
+</template>
+<template #sdk>
 
----
+```js
+import { createDirectus, rest, serverHealth } from '@directus/sdk';
+
+const client = createDirectus('https://directus.example.com').with(rest());
+
+const result = await client.request(serverHealth());
+```
+
+</template>
+</SnippetToggler>
